@@ -2,25 +2,28 @@
 
 using Luxor
 
-#=
-Drawing(1000, 1000, "hello-world.png")
-origin()
-background("black")
-sethue("red")
-fontsize(50)
-text("hello world")
-finish()
-preview()
-=#
-Drawing(1000, 1000)
+Drawing(1000, 1000,"entropyEEG.png")
 origin()
 
-background("magenta")
-tiles = Tiler(600, 400, 5, 5, margin=30)
+background("black")
+
+
+tiles = Tiler(900, 900, 35, 35, margin=20)
+
 for (pos, n) in tiles
+    
     box(pos, tiles.tilewidth, tiles.tileheight, :clip)
-    background(randomhue()...)
+    #background(randomhue()...)
+    if(rand() > 0.5)
+        background("white")
+    else
+        background("black")
+    end
+    
+   #sethue("white")
     clipreset()
 end
+
+
 finish()
 preview()
