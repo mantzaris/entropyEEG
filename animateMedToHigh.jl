@@ -1,14 +1,18 @@
+#=
+al062959@cosd4vgzc2:/tmp/tmpMvSH80$ display example.gif al062959@cosd4vgzc2:/tmp/tmpMvSH80$ cd ..
+al062959@cosd4vgzc2:/tmp$ cd tmpZWvrDF/
+al062959@cosd4vgzc2:/tmp/tmpZWvrDF$ convert -delay 1 -loop 0 *.png example.gifal062959@cosd4vgzc2:/tmp/tmpZWvrDF$ display example.gif 
+=#
 
 #use the library Luxor which has functions for us to 'draw' primitive/basic elements onto the screen and save on file
 using Luxor
 
 
-function init()
+function initAni1()
+
+    demo = Movie(1000, 1000, "testLow")
 
     
-    #basic steps to set up a new image
-    newDraw()
-
     #the high entropy case
     #highEntropy()
 
@@ -16,18 +20,26 @@ function init()
     #mediumEntropy()
 
     #low entropy case
-    lowEntropy()
+#    lowEntropy()
 
+    animate(demo, [
+    Scene(demo, backdrop, 0:359),
+    Scene(demo, highEntropy, 0:359)
+    ],
+    creategif=false, pathname="/home/al062959/Documents/repos/entropyEEG/expert.gif")
     
-    
-    finish() 
-    preview()
+ #   finish() 
+  #  preview()
 
 end
 
+function backdrop(scene, framenumber)
+    background("black")
+end
 
 #1 box of 12x12
-function lowEntropy()
+function lowEntropy(scene, framenumber)
+
     tiles = Tiler(900, 900, 35, 35, margin=20)
     
     tLcol = rand(7:(35-1))
@@ -41,7 +53,7 @@ function lowEntropy()
         if(n==tL)
             println("box draw")
             box(pos,tiles.tilewidth*6, tiles.tileheight*6, :clip)
-            background("white")
+            #background("white")
         end
 
         clipreset()
@@ -120,7 +132,7 @@ end
 
 
 #the high entropy case
-function highEntropy()
+function highEntropy(scene, framenumber)
     #Luxor function to make tiles/cells/matrix/grid of the 900by900 image with 35x35 blocks
     #the return from this function allows us to iterate over the tiles for the position and number
     tiles = Tiler(900, 900, 35, 35, margin=20)
