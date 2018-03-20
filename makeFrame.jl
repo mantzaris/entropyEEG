@@ -23,12 +23,21 @@ end
 #9 different 4x4 pixels non-overlapping placed randomly over the grid
 function mediumEntropy()
     tiles = Tiler(900, 900, 35, 35, margin=20)
-
-    n1 = rand(1:34^2)# 1156
-    n2 = rand(1:34^2)# 1156
+    
     nAr = zeros(Int,1,9)
-    for ii in 1:9
-        nAr[ii] = rand(1:34^2)# 1156
+    avoidNums = zeros(Int,1, 9*4)
+    ii=1
+    while(ii <= 9)
+        tL = rand(1:34^2)# 1156
+        tR = tL + 1
+        bL = tL + 34
+        bR = tL + 34 + 1
+        
+        tmp=length(find(avoidNums.==tL))+length(find(avoidNums.==tR))+length(find(avoidNums.==bL))+length(find(avoidNums.==bR))
+        if(tmp == 0)
+            nAr[ii] = tL
+            ii = ii + 1
+        end
     end
     println(nAr)
     
@@ -42,8 +51,7 @@ function mediumEntropy()
         clipreset()
     end
     
-    
-      
+          
 end
 
 
