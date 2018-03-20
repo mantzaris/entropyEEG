@@ -5,16 +5,56 @@ using Luxor
 
 function init()
 
+    
     #basic steps to set up a new image
     newDraw()
 
     #the high entropy case
-    highEntropy()
-   
+    #highEntropy()
+
+    #medium entropy case
+    mediumEntropy()
+    
     finish() 
     preview()
 
 end
+
+#9 different 4x4 pixels non-overlapping placed randomly over the grid
+function mediumEntropy()
+    tiles = Tiler(900, 900, 35, 35, margin=20)
+
+    n1 = rand(1:34^2)# 1156
+    n2 = rand(1:34^2)# 1156
+    nAr = zeros(Int,1,9)
+    for ii in 1:9
+        nAr[ii] = rand(1:34^2)# 1156
+    end
+    println(nAr)
+    
+    for (pos, n) in tiles
+        if(length(find(n.==nAr))>0)#n==n1 || n==n2)
+            println("box draw")
+            box(pos, tiles.tilewidth*2, tiles.tileheight*2, :clip)
+            quadGrid()
+        end
+
+        clipreset()
+    end
+    
+    
+      
+end
+
+
+function quadGrid()
+    #set the square to be black or white
+    background("white")
+    
+    
+end
+
+
 
 #basic steps to set up a new image
 function newDraw()
