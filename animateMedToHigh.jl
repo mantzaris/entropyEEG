@@ -18,7 +18,7 @@ function initAni1()
 
     animate(demo, [
     Scene(demo, backdrop, 0:100),
-    Scene(demo, lowEntropy, 0:100)
+    Scene(demo, mediumEntropy, 0:100)
     ],
     creategif=true, pathname="/home/al062959/Documents/repos/entropyEEG/expert.gif")
     
@@ -31,7 +31,6 @@ end
 #1 box of 12x12
 function lowEntropy(scene, framenumber)
     tiles = Tiler(900, 900, 35, 35, margin=20)
-
     NN=[]
     tLcol = rand(1:(35-12))
     tLrow = rand(1:(35-12))
@@ -43,12 +42,10 @@ function lowEntropy(scene, framenumber)
             append!(NN,tmp)
         end
         
-    end
-
-    
+    end    
     for (pos, n) in tiles
         box(pos,tiles.tilewidth, tiles.tileheight, :clip)
-        if( n == tLcol || n == tLrowInd  || !(isempty(find(n.==NN))) )
+        if( !(isempty(find(n.==NN))) )
             background("white")
         else
             background("red")
@@ -59,49 +56,40 @@ function lowEntropy(scene, framenumber)
 end
 ###
 #9 different 4x4 pixels non-overlapping placed randomly over the grid
-function mediumEntropy()
+function mediumEntropy(scene, framenumber)
     tiles = Tiler(900, 900, 35, 35, margin=20)
-    
-    nAr = zeros(Int,1,9*4)
-    avoidNums = zeros(Int,1, 9*4)
-    ii=1
-    while(ii <= 9*4)
-        tL = rand(1:34^2)# 1156
-         tLcol = rand(2:(35-1))
-    tLrow = rand(2:(35-1))
-    tL = tLcol + tLrow*(35)
-        tR = tL + 1
-        bL = tL + 35
-        bR = tL + 35 + 1
-        #=
-        avoidNums[ii]=(tL)
-        avoidNums[ii+1]=(tR)
-        avoidNums[ii+2]=(bL)
-        avoidNums[ii+3]=(bR)
-        =#
-        tmp=length(find(avoidNums.==tL))+length(find(avoidNums.==tR))+length(find(avoidNums.==bL))+length(find(avoidNums.==bR))
-        if(tmp == 0)
-            nAr[ii] = tL
-            nAr[ii+1] = tR
-            nAr[ii+2] = bL
-            nAr[ii+3] = bR
-            
-            ii = ii + 4
+    NN = []
+    numTotal = 3^2
+    tileNumTotal = 35^2
+    NNfull = collect(1:tileNumTotal)
+    for bb in 1:numTotal
+        n1 = sample(NNfull,1,replace=false)
+        for ii in 1:4
+            for jj in 1:4
+                tmp = n1  + ii - 2  + (jj-1)*35
+                append!(NN,tmp)
+                deleteat!(NNfull,findin(NNfull,tmp)) 
+            end    
         end
+        for ii in -3:4
+            for jj in -3:4
+                tmp = n1  + ii - 2  + (jj-1)*35            
+                deleteat!(NNfull,findin(NNfull,tmp)) 
+            end    
+        end
+      
     end
-    println(nAr)
     
+   
     for (pos, n) in tiles
-        if(length(find(n.==nAr))>0)#n==n1 || n==n2)
-            println("box draw")
-            box(pos, tiles.tilewidth, tiles.tileheight, :clip)
+        box(pos, tiles.tilewidth, tiles.tileheight, :clip)
+        if(  !(isempty(find(n.==NN)))  )            
             background("white")
+        else
+            background("red")
         end
-
         clipreset()
-    end
-    
-          
+    end       
 end
 
 
@@ -161,5 +149,33 @@ function newDraw()
 
 end
 
+
+    nAr = zeros(Int,1,9*4)
+    avoidNums = zeros(Int,1, 9*4)
+    ii=1
+    while(ii <= 9*4)
+        tL = rand(1:34^2)# 1156
+         tLcol = rand(2:(35-1))
+    tLrow = rand(2:(35-1))
+    tL = tLcol + tLrow*(35)
+        tR = tL + 1
+        bL = tL + 35
+        bR = tL + 35 + 1
+        #=
+        avoidNums[ii]=(tL)
+        avoidNums[ii+1]=(tR)
+        avoidNums[ii+2]=(bL)
+        avoidNums[ii+3]=(bR)
+        =#
+        tmp=length(find(avoidNums.==tL))+length(find(avoidNums.==tR))+length(find(avoidNums.==bL))+length(find(avoidNums.==bR))
+        if(tmp == 0)
+            nAr[ii] = tL
+            nAr[ii+1] = tR
+            nAr[ii+2] = bL
+            nAr[ii+3] = bR
+            
+            ii = ii + 4
+        end
+    end
 =#
 
