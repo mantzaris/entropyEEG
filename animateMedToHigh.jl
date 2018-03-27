@@ -3,34 +3,25 @@ al062959@cosd4vgzc2:/tmp/tmpMvSH80$ display example.gif al062959@cosd4vgzc2:/tmp
 al062959@cosd4vgzc2:/tmp$ cd tmpZWvrDF/
 al062959@cosd4vgzc2:/tmp/tmpZWvrDF$ convert -delay 1 -loop 0 *.png example.gifal062959@cosd4vgzc2:/tmp/tmpZWvrDF$ display example.gif 
 =#
-
 #use the library Luxor which has functions for us to 'draw' primitive/basic elements onto the screen and save on file
 using Luxor
-
+using Distributions
 
 function initAni1()
-
-    demo = Movie(1000, 1000, "testLow")
-
-    
+    demo = Movie(1000, 1000, "testLow")   
     #the high entropy case
     #highEntropy()
-
     #medium entropy case
     #mediumEntropy()
-
     #low entropy case
-#    lowEntropy()
+#   lowEntropy()
 
     animate(demo, [
-    Scene(demo, backdrop, 0:359),
-    Scene(demo, highEntropy, 0:359)
+    Scene(demo, backdrop, 0:100),
+    Scene(demo, highEntropy, 0:100)
     ],
-    creategif=false, pathname="/home/al062959/Documents/repos/entropyEEG/expert.gif")
+    creategif=true, pathname="/home/al062959/Documents/repos/entropyEEG/expert.gif")
     
- #   finish() 
-  #  preview()
-
 end
 
 function backdrop(scene, framenumber)
@@ -53,17 +44,13 @@ function lowEntropy(scene, framenumber)
         if(n==tL)
             println("box draw")
             box(pos,tiles.tilewidth*6, tiles.tileheight*6, :clip)
-            #background("white")
+            randomhue()#background("white")
         end
 
         clipreset()
     end
-    
-          
+              
 end
-
-
-
 
 #9 different 4x4 pixels non-overlapping placed randomly over the grid
 function mediumEntropy()
@@ -111,9 +98,6 @@ function mediumEntropy()
           
 end
 
-
-
-
 #basic steps to set up a new image
 function newDraw()
     #set the window size and output image of the function
@@ -126,26 +110,33 @@ function newDraw()
 
 end
 
-
-
-
-
-
 #the high entropy case
 function highEntropy(scene, framenumber)
     #Luxor function to make tiles/cells/matrix/grid of the 900by900 image with 35x35 blocks
     #the return from this function allows us to iterate over the tiles for the position and number
     tiles = Tiler(900, 900, 35, 35, margin=20)
-    
+
+    #how many independently drawn boxes
+    numTotal = 12^2
+    tileNumTotal = 35^2
+    #sample the tiles which will be colored
+    tileInds = sample(1:tileNumTotal,numTotal,replace=false)
+    #println(tileInds)
+
     #'pos' is the center of the tile as a Point object
     #'n' is the number of the tiles in the Tiler object for the grid we requested
     for (pos, n) in tiles
         
-        #draw a box, with the width and height of the tile, and the pos at the center, put the clip as the boundary
+         
         box(pos, tiles.tilewidth, tiles.tileheight, :clip)
-        #background(randomhue()...)
         
-        randomGrid()
+        if( isempty( find( n .== tileInds ) ))
+            background("red")
+        else
+            background("white")
+        end
+        
+        #randomGrid()
         #needed to 
         clipreset()
     end
@@ -157,7 +148,7 @@ function randomGrid()
     if(rand() > 0.5)
         background("white")
     else
-        background("black")
+        background("red")
     end
     
 end
