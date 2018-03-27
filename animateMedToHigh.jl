@@ -18,7 +18,7 @@ function initAni1()
 
     animate(demo, [
     Scene(demo, backdrop, 0:100),
-    Scene(demo, highEntropy, 0:100)
+    Scene(demo, lowEntropy, 0:100)
     ],
     creategif=true, pathname="/home/al062959/Documents/repos/entropyEEG/expert.gif")
     
@@ -30,28 +30,34 @@ end
 
 #1 box of 12x12
 function lowEntropy(scene, framenumber)
-
     tiles = Tiler(900, 900, 35, 35, margin=20)
+
+    NN=[]
+    tLcol = rand(1:(35-12))
+    tLrow = rand(1:(35-12))
+    tLrowInd = 1 + (tLrow-1)*35
     
-    tLcol = rand(7:(35-1))
-    tLrow = rand(7:(35-1))
-    tL = tLcol + tLrow*(35)
-    println(tLcol)
-    println(tLrow)
-    println(tL)
+    for ii in 1:12
+        for jj in 1:12
+            tmp = tLrowInd + tLcol + ii - 2  + (jj-1)*35
+            append!(NN,tmp)
+        end
+        
+    end
+
     
     for (pos, n) in tiles
-        if(n==tL)
-            println("box draw")
-            box(pos,tiles.tilewidth*6, tiles.tileheight*6, :clip)
-            randomhue()#background("white")
+        box(pos,tiles.tilewidth, tiles.tileheight, :clip)
+        if( n == tLcol || n == tLrowInd  || !(isempty(find(n.==NN))) )
+            background("white")
+        else
+            background("red")
         end
-
         clipreset()
     end
-              
+    
 end
-
+###
 #9 different 4x4 pixels non-overlapping placed randomly over the grid
 function mediumEntropy()
     tiles = Tiler(900, 900, 35, 35, margin=20)
@@ -98,18 +104,8 @@ function mediumEntropy()
           
 end
 
-#basic steps to set up a new image
-function newDraw()
-    #set the window size and output image of the function
-    Drawing(1000, 1000,"entropyEEG.png")
-    #function to make an origin for the image in the 'center' of the drawing window
-    origin()
-    
-    #default black background
-    background("black")
 
-end
-
+####################
 #the high entropy case
 function highEntropy(scene, framenumber)
     #Luxor function to make tiles/cells/matrix/grid of the 900by900 image with 35x35 blocks
@@ -121,13 +117,10 @@ function highEntropy(scene, framenumber)
     tileNumTotal = 35^2
     #sample the tiles which will be colored
     tileInds = sample(1:tileNumTotal,numTotal,replace=false)
-    #println(tileInds)
-
+  
     #'pos' is the center of the tile as a Point object
     #'n' is the number of the tiles in the Tiler object for the grid we requested
     for (pos, n) in tiles
-        
-         
         box(pos, tiles.tilewidth, tiles.tileheight, :clip)
         
         if( isempty( find( n .== tileInds ) ))
@@ -136,12 +129,14 @@ function highEntropy(scene, framenumber)
             background("white")
         end
         
-        #randomGrid()
-        #needed to 
         clipreset()
     end
 end
 
+
+
+
+#=
 #the high entropy case logic for each cell
 function randomGrid()
     #set the square to be black or white
@@ -154,5 +149,17 @@ function randomGrid()
 end
 
 
+#basic steps to set up a new image
+function newDraw()
+    #set the window size and output image of the function
+    Drawing(1000, 1000,"entropyEEG.png")
+    #function to make an origin for the image in the 'center' of the drawing window
+    origin()
+    
+    #default black background
+    background("black")
 
+end
+
+=#
 
