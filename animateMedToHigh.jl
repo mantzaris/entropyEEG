@@ -9,12 +9,7 @@ using Distributions
 
 function initAni1()
     demo = Movie(1000, 1000, "testLow")   
-    #the high entropy case
-    #highEntropy()
-    #medium entropy case
-    #mediumEntropy()
-    #low entropy case
-#   lowEntropy()
+    
 
     animate(demo, [
     Scene(demo, backdrop, 0:100),
@@ -62,6 +57,21 @@ function mediumEntropy(scene, framenumber)
     numTotal = 3^2
     tileNumTotal = 35^2
     NNfull = collect(1:tileNumTotal)
+    NNq = []
+    #
+    for ii in 1:maximum(NNfull)
+        if( mod(ii,36)==0)# || mod(ii,35-1)==0 || mod(ii,35-2)==0 || mod(ii,35-3)==0 || mod(ii,35-4)==0)
+            append!(NNq,ii)
+            #deleteat!(NNfull,findin(NNfull,ii))
+        end
+        if( ii > (35-3)*35 )
+            #append!(NNq,ii)
+            #deleteat!(NNfull,findin(NNfull,ii))
+        end
+        
+    end
+    #
+    
     for bb in 1:numTotal
         n1 = sample(NNfull,1,replace=false)
         for ii in 1:4
@@ -71,13 +81,15 @@ function mediumEntropy(scene, framenumber)
                 deleteat!(NNfull,findin(NNfull,tmp)) 
             end    
         end
-        for ii in -3:4
-            for jj in -3:4
-                tmp = n1  + ii - 2  + (jj-1)*35            
+        n2 = n1 - 3 - (35*3)
+        for ii in 1:8
+            for jj in 1:8
+                tmp = n2 + ii - 2 + (jj-1)*35
+                append!(NNq,tmp)
                 deleteat!(NNfull,findin(NNfull,tmp)) 
             end    
         end
-      
+        
     end
     
    
@@ -85,6 +97,8 @@ function mediumEntropy(scene, framenumber)
         box(pos, tiles.tilewidth, tiles.tileheight, :clip)
         if(  !(isempty(find(n.==NN)))  )            
             background("white")
+        elseif(  !(isempty(find(n.==NNq)))  )            
+            background("red")#background("blue")
         else
             background("red")
         end
