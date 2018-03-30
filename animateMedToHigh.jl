@@ -60,13 +60,13 @@ function mediumEntropy(scene, framenumber)
     NNq = []
     #
     for ii in 1:maximum(NNfull)
-        if( mod(ii,36)==0)# || mod(ii,35-1)==0 || mod(ii,35-2)==0 || mod(ii,35-3)==0 || mod(ii,35-4)==0)
+        if( mod(ii,35)==0 || mod(ii+1,35)==0 || mod(ii+2,35)==0 )# || mod(ii,35-2)==0 || mod(ii,35-3)==0 || mod(ii,35-4)==0)
             append!(NNq,ii)
-            #deleteat!(NNfull,findin(NNfull,ii))
-        end
-        if( ii > (35-3)*35 )
-            #append!(NNq,ii)
-            #deleteat!(NNfull,findin(NNfull,ii))
+            deleteat!(NNfull,findin(NNfull,ii))
+        
+        elseif( ii > (35-3)*35 )
+            append!(NNq,ii)
+            deleteat!(NNfull,findin(NNfull,ii))
         end
         
     end
@@ -81,6 +81,7 @@ function mediumEntropy(scene, framenumber)
                 deleteat!(NNfull,findin(NNfull,tmp)) 
             end    
         end
+        #prohibited rim
         n2 = n1 - 3 - (35*3)
         for ii in 1:8
             for jj in 1:8
@@ -96,11 +97,11 @@ function mediumEntropy(scene, framenumber)
     for (pos, n) in tiles
         box(pos, tiles.tilewidth, tiles.tileheight, :clip)
         if(  !(isempty(find(n.==NN)))  )            
-            background("white")
-        elseif(  !(isempty(find(n.==NNq)))  )            
-            background("red")#background("blue")
-        else
             background("red")
+        elseif(  !(isempty(find(n.==NNq)))  )            
+            background("white")
+        else
+            background("white")
         end
         clipreset()
     end       
