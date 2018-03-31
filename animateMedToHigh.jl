@@ -60,10 +60,9 @@ function mediumEntropy(scene, framenumber)
     NNq = []
     #
     for ii in 1:maximum(NNfull)
-        if( mod(ii,35)==0 || mod(ii+1,35)==0 || mod(ii+2,35)==0 )# || mod(ii,35-2)==0 || mod(ii,35-3)==0 || mod(ii,35-4)==0)
+        if( mod(ii,35)==0 || mod(ii+1,35)==0 || mod(ii+2,35)==0)# || mod(ii,35-2)==0 || mod(ii,35-3)==0 || mod(ii,35-4)==0)
             append!(NNq,ii)
-            deleteat!(NNfull,findin(NNfull,ii))
-        
+            deleteat!(NNfull,findin(NNfull,ii))        
         elseif( ii > (35-3)*35 )
             append!(NNq,ii)
             deleteat!(NNfull,findin(NNfull,ii))
@@ -72,25 +71,35 @@ function mediumEntropy(scene, framenumber)
     end
     #
     
-    for bb in 1:numTotal
-        n1 = sample(NNfull,1,replace=false)
-        for ii in 1:4
-            for jj in 1:4
-                tmp = n1  + ii - 2  + (jj-1)*35
-                append!(NN,tmp)
-                deleteat!(NNfull,findin(NNfull,tmp)) 
-            end    
-        end
-        #prohibited rim
-        n2 = n1 - 3 - (35*3)
-        for ii in 1:8
-            for jj in 1:8
-                tmp = n2 + ii - 2 + (jj-1)*35
-                append!(NNq,tmp)
-                deleteat!(NNfull,findin(NNfull,tmp)) 
-            end    
-        end
-        
+    #for bb in 1:numTotal
+    bb=1
+    while(bb <= numTotal)
+        n1 = sample(NNfull,1,replace=false)[1]
+#        print(string("type=",typeof(n1)," , mod(n1,35)=",mod(n1,35)," , mod(n1+1,35)=",mod(n1+1,35)," , mod(n1+2,35)=",mod(n1+2,35)))
+#        println(" , n1 value=",n1)
+        #if( (mod(n1,35)==0 || mod(n1+1,35)==0 || mod(n1+2,35)==0) )
+        #    println("on edge")
+        #    continue
+        #else
+            
+            for ii in 1:4
+                for jj in 1:4
+                    tmp = n1  + ii - 1  + (jj-1)*35
+                    append!(NN,tmp)#append!(NN,tmp)
+                    deleteat!(NNfull,findin(NNfull,tmp)) 
+                end    
+            end
+            #prohibited rim
+            n2 = n1 - 3 - (35*3)
+            for ii in 1:8
+                for jj in 1:8
+                    tmp = n2 + ii - 2 + (jj-1)*35
+                    append!(NNq,tmp)
+                    deleteat!(NNfull,findin(NNfull,tmp)) 
+                end    
+            end
+            bb += 1
+        #end
     end
     
    
